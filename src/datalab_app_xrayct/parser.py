@@ -69,18 +69,27 @@ def load_nexus(path: Path) -> tuple[dict, np.ndarray | None]:
         "detector": _safe_get(detector, "description") if detector else None,
     }
 
-    # Find the data cube. Try NXdetector/data first, then any NXdata signal.
+    # Find the data cube. Try NXdetector/data first, then walk NXdata groups
+    # but ONLY accept signals that are at least 3-D — otherwise we will happily
+    # grab a 1-D ion-chamber log or temperature trace and treat it as a volume.
     data_node = None
     if detector is not None and "data" in detector:
-        data_node = detector["data"]
-    else:
+        candidate = detector["data"]
+        if getattr(candidate, "shape", None) and len(candidate.shape) >= 3:
+            data_node = candidate
+    if data_node is None:
         try:
             import nexusformat.nexus as _nx
 
             for n in entry.walk():
                 if isinstance(n, _nx.NXdata) and n.nxsignal is not None:
-                    data_node = n.nxsignal
-                    break
+                    candidate = n.nxsignal
+                    if (
+                        getattr(candidate, "shape", None) is not None
+                        and len(candidate.shape) >= 3
+                    ):
+                        data_node = candidate
+                        break
         except Exception:
             data_node = None
 
@@ -117,10 +126,11 @@ def load_tiff_stack(directory: Path) -> tuple[dict, np.ndarray | None]:
             "dtype": str(page.dtype),
             "n_files": len(files),
         }
-        if tf.ome_metadata:
-            meta["raw_tiff_metadata"] = tf.ome_metadata
-        elif tf.imagej_metadata:
-            meta["raw_tiff_metadata"] = str(tf.imagej_metadata)
+        # Intentionally NOT storing tf.ome_metadata / tf.imagej_metadata: some
+        # processing pipelines emit multi-megabyte OME-XML strings that would
+        # bloat the Mongo document (16 MB hard cap). shape/dtype above already
+        # capture what the UI needs. Re-add as a separate File asset if a
+        # downstream Phase needs the raw XML.
     return meta, central
 
 

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import numpy as np
 import pytest
 
 from datalab_app_xrayct import __version__
@@ -66,6 +67,40 @@ def test_manifest_hash_is_stable(tmp_path: Path):
     f = tmp_path / "x.nxs"
     f.write_bytes(b"hello world")
     assert manifest_hash([f]) == manifest_hash([f])
+
+
+def test_parser_skips_1d_auxiliary_nxdata(tmp_path: Path):
+    """Regression: a temperature log NXdata must not be mistaken for a volume.
+
+    Real Diamond NeXus files routinely contain auxiliary 1D NXdata groups
+    (ion chambers, ring current, sample temperature). The walker must skip
+    them and only accept signals with ndim >= 3.
+    """
+    import h5py
+
+    nxs = tmp_path / "with_aux.nxs"
+    with h5py.File(nxs, "w") as f:
+        entry = f.create_group("entry")
+        entry.attrs["NX_class"] = "NXentry"
+
+        # 1D auxiliary log — appears FIRST in walk order
+        aux = entry.create_group("temperature_log")
+        aux.attrs["NX_class"] = "NXdata"
+        ds = aux.create_dataset("temperature", data=np.linspace(20, 25, 100))
+        aux.attrs["signal"] = "temperature"
+        ds  # noqa
+
+        # 3D real volume — appears LATER
+        det = entry.create_group("instrument_data")
+        det.attrs["NX_class"] = "NXdata"
+        cube = np.zeros((8, 32, 32), dtype=np.float32)
+        cube[:, 8:24, 8:24] = 1.0
+        det.create_dataset("data", data=cube)
+        det.attrs["signal"] = "data"
+
+    meta, central = load_nexus(nxs)
+    assert meta["shape"] == (8, 32, 32), "parser grabbed the 1D temperature log"
+    assert central is not None and central.shape == (32, 32)
 
 
 def test_full_metadata_roundtrip(tmp_path: Path):

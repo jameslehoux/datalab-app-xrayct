@@ -46,6 +46,10 @@ class XrayCTBlock(DataBlock):
 
     def parse_and_catalog(self):
         """Extract metadata and a central-slice preview from the source dataset."""
+        # Reset transient state on every (re-)parse so the user doesn't see an
+        # ever-growing pile of duplicate errors after clicking Reparse.
+        self.data["errors"] = []
+
         # Lazy import: only needed when datalab actually invokes the block.
         try:
             from pydatalab.file_utils import get_file_info_by_id
@@ -83,7 +87,7 @@ class XrayCTBlock(DataBlock):
                 else:
                     raw_meta, preview_slice = load_nexus(local_path)
             except Exception as e:
-                self.data.setdefault("errors", []).append(f"Parser error: {e}")
+                self.data["errors"].append(f"Parser error: {e}")
 
         # 3. Build the typed metadata model.
         shape_tuple = raw_meta.get("shape")
