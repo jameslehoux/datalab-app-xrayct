@@ -33,8 +33,15 @@ dependencies = [
     "Pillow>=10",
 ]
 
-[project.optional-dependencies]
-local = ["datalab-server[apps] >= 0.6"]
+# NOTE on datalab-server / pydatalab:
+# The currently published `datalab-server` on PyPI pins `pydantic<2`, which
+# conflicts with this plugin's pydantic v2 schema. Until a v2-compatible
+# release is published, install pydatalab from source into the same venv:
+#
+#     pip install "git+https://github.com/datalab-org/datalab.git#subdirectory=pydatalab"
+#     pip install -e .
+#
+# See INSTALL.md for the full instructions.
 
 [project.urls]
 homepage = "https://jameslehoux.github.io/datalab-app-xrayct/"
@@ -72,7 +79,8 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.uv]
 dev-dependencies = [
-    "datalab-server[server] > 0.5",
+    # datalab-server intentionally omitted: PyPI release pins pydantic<2 and
+    # is incompatible with our v2 schema. Install from git when needed locally.
     "pytest ~= 8.2",
     "pytest-cov ~= 5.0",
     "pre-commit ~= 4.0",
