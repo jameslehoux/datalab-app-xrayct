@@ -25,9 +25,7 @@ def test_version():
 
 def test_resolve_diamond_i13_path():
     uri = "diamond://i13/2025/mg39713-1/experiment/scan_00123.nxs"
-    assert resolve_diamond(uri) == Path(
-        "/dls/i13/data/2025/mg39713-1/experiment/scan_00123.nxs"
-    )
+    assert resolve_diamond(uri) == Path("/dls/i13/data/2025/mg39713-1/experiment/scan_00123.nxs")
 
 
 def test_resolve_diamond_explicit_prefix_overrides_default():

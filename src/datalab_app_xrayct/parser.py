@@ -77,17 +77,14 @@ def load_nexus(path: Path) -> tuple[dict, np.ndarray | None]:
         candidate = detector["data"]
         if getattr(candidate, "shape", None) and len(candidate.shape) >= 3:
             data_node = candidate
-    if data_node is None:
+    if data_node is None and entry is not None:
         try:
             import nexusformat.nexus as _nx
 
             for n in entry.walk():
                 if isinstance(n, _nx.NXdata) and n.nxsignal is not None:
                     candidate = n.nxsignal
-                    if (
-                        getattr(candidate, "shape", None) is not None
-                        and len(candidate.shape) >= 3
-                    ):
+                    if getattr(candidate, "shape", None) is not None and len(candidate.shape) >= 3:
                         data_node = candidate
                         break
         except Exception:
