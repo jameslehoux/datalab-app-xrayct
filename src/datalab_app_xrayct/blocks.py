@@ -54,9 +54,7 @@ class XrayCTBlock(DataBlock):
         try:
             from pydatalab.file_utils import get_file_info_by_id
         except ImportError as e:
-            raise RuntimeError(
-                "datalab-server must be installed to use the X-ray CT block."
-            ) from e
+            raise RuntimeError("datalab-server must be installed to use the X-ray CT block.") from e
 
         # 1. Resolve source. Two ingestion paths:
         #    (a) An explicit URI in self.data["uri"] — the production path.
@@ -104,15 +102,11 @@ class XrayCTBlock(DataBlock):
                 uri=uri,
                 scheme=scheme,
                 size_bytes=(
-                    local_path.stat().st_size
-                    if local_path and local_path.is_file()
-                    else None
+                    local_path.stat().st_size if local_path and local_path.is_file() else None
                 ),
                 n_files=raw_meta.get("n_files"),
                 content_hash=(
-                    manifest_hash([local_path])
-                    if local_path and local_path.is_file()
-                    else None
+                    manifest_hash([local_path]) if local_path and local_path.is_file() else None
                 ),
             ),
             acquisition=AcquisitionMetadata(

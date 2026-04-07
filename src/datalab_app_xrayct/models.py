@@ -20,9 +20,9 @@ from pydantic import BaseModel, Field, field_validator
 
 class StorageScheme(str, Enum):
     DIAMOND = "diamond"  # diamond://<beamline>/<year>/<visit>/<rest>
-    SCARF = "scarf"      # scarf://<project>/<rest>
-    LOCAL = "file"       # file:///abs/path  (development only)
-    S3 = "s3"            # s3://bucket/key
+    SCARF = "scarf"  # scarf://<project>/<rest>
+    LOCAL = "file"  # file:///abs/path  (development only)
+    S3 = "s3"  # s3://bucket/key
 
 
 class RemoteAsset(BaseModel):
