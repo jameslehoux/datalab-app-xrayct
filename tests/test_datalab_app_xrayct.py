@@ -30,6 +30,20 @@ def test_resolve_diamond_i13_path():
     )
 
 
+def test_resolve_diamond_explicit_prefix_overrides_default():
+    uri = "diamond://i13/2025/mg39713-1/experiment/scan_00123.nxs"
+    assert resolve_diamond(uri, mount_prefix="/mnt/dls-mirror") == Path(
+        "/mnt/dls-mirror/i13/data/2025/mg39713-1/experiment/scan_00123.nxs"
+    )
+
+
+def test_resolve_diamond_env_var(monkeypatch):
+    monkeypatch.setenv("DATALAB_DIAMOND_MOUNT", "/data/dls")
+    assert resolve_diamond("diamond://i13/2025/mg39713-1/foo.nxs") == Path(
+        "/data/dls/i13/data/2025/mg39713-1/foo.nxs"
+    )
+
+
 def test_resolve_dispatches_by_scheme():
     assert resolve("file:///tmp/foo.nxs") == Path("/tmp/foo.nxs")
     with pytest.raises(NotImplementedError):
