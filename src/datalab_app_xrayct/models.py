@@ -15,7 +15,10 @@ from datetime import datetime
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+# NOTE: We target pydantic v1 (`from pydantic import validator`, not
+# `field_validator`) because the current `pydatalab` main branch is still on
+# pydantic v1. When pydatalab migrates we will revisit this.
+from pydantic import BaseModel, Field, validator
 
 
 class StorageScheme(str, Enum):
@@ -40,8 +43,7 @@ class RemoteAsset(BaseModel):
     )
     last_seen: datetime | None = None
 
-    @field_validator("uri")
-    @classmethod
+    @validator("uri")
     def _scheme_present(cls, v: str) -> str:
         if "://" not in v:
             raise ValueError("URI must include a scheme, e.g. diamond://i13/2025/...")

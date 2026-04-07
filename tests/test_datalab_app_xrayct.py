@@ -122,8 +122,10 @@ def test_full_metadata_roundtrip(tmp_path: Path):
         title="mock",
         asset=RemoteAsset(uri=f"file://{nxs}", scheme=StorageScheme.LOCAL),
     )
-    # Pydantic model dumps to plain JSON-safe dict.
-    dumped = doc.model_dump(mode="json")
+    # Pydantic v1: round-trip via .json() to get a JSON-safe dict.
+    import json
+
+    dumped = json.loads(doc.json())
     assert dumped["schema_version"] == "0.1"
     assert dumped["asset"]["scheme"] == "file"
     assert raw["beamline"] == "i13-2"

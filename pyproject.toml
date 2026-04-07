@@ -25,7 +25,7 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "pydantic>=2.6",
+    "pydantic>=1.10,<2",  # matches pydatalab main; revisit when pydatalab migrates to v2
     "numpy>=1.26,<2",
     "nexusformat>=1.0",
     "h5py>=3.10",

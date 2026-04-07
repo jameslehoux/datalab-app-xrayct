@@ -135,5 +135,8 @@ class XrayCTBlock(DataBlock):
             if shape_tuple:
                 meta.preview_slice_index = shape_tuple[0] // 2
 
-        # 5. Persist into the block document.
-        self.data["xrayct_metadata"] = meta.model_dump(mode="json")
+        # 5. Persist into the block document. Use json()->loads round-trip to
+        # produce a JSON-safe dict (handles datetimes, enums) under pydantic v1.
+        import json as _json
+
+        self.data["xrayct_metadata"] = _json.loads(meta.json())
