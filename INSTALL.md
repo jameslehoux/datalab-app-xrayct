@@ -5,8 +5,8 @@ We recommend you use [`uv`](https://astral.sh/uv) for managing virtual environme
 Once you have `uv` installed, you can clone this repository and install the package in a fresh virtual environment with:
 
 ```
-git clone git@github.com:{{ repository_namespace }}/{{ package_name }}
-cd {{package_name}}
+git clone git@github.com:jameslehoux/datalab_app_xrayct
+cd datalab_app_xrayct
 uv sync --all-extras --dev
 ```
 

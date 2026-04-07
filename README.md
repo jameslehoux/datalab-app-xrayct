@@ -1,36 +1,58 @@
-# datalab-app-plugin-template
+# datalab-app-xrayct
 
-> [!WARNING]
-> This repository is still under active development and will have some rough edges. 
-Please raise any issues in the [Issue Tracker](https://github.com/datalab-org/datalab-app-plugin-template/issues?q=sort%3Aupdated-desc+is%3Aissue+is%3Aopen) or contact us via the routes listed at [datalab-org](https://github.com/datalab-org).
+A [datalab](https://datalab-org.io) plugin for cataloguing **X-ray computed
+tomography (CT) and operando battery imaging datasets** from facilities like
+Diamond Light Source.
 
-This template uses [Copier](https://github.com/copier-org/copier).
+## Why a plugin?
 
-We recommend using `uv` to manage Python versions and environments, in which case the template can be used with:
+Tomography datasets routinely exceed 100 GB, so moving them to a web server is
+infeasible. This plugin uses a **Control Plane / Data Plane** split:
 
-```shell
-mkdir my_plugin
-uvx copier copy "git@github.com:datalab-org/datalab-app-plugin-template" <my_plugin>
+- **Control Plane (datalab):** stores metadata, a small preview image, and a
+  remote-storage **URI**.
+- **Data Plane (HPC / deep storage):** keeps the raw NeXus / TIFF volumes
+  exactly where they are.
+
+## Phase 1 status (this release)
+
+- ✅ NeXus / HDF5 metadata extraction (`nexusformat` + `h5py`)
+- ✅ TIFF stack support (`tifffile`)
+- ✅ Pydantic schema (`XrayCTMetadata`) with explicit URI scheme
+- ✅ Central-slice PNG preview generation
+- ✅ Diamond URI resolver (`diamond://i13/<year>/<visit>/...`)
+- ✅ Mock NeXus generator for tests
+- ✅ Vue 3 datacard component (`webapp/XrayCTBlock.vue`)
+
+## Install
+
+```bash
+pip install -e ".[local]"
 ```
 
-This will guide you through the process of creating a new repository for your plugin.
-You can commit the result, alongside the `.copier-answers.yml` file, to your new repository (after creating it on GitHub or elsewhere):
+The `local` extra pulls in `datalab-server[apps]` so the block registers via
+the `pydatalab.apps.plugins` entry point.
 
-```shell
-cd <my_plugin>
-uv lock
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin <your-repo-url>
+## URI scheme
+
+Lock in early — Phase 2 depends on it:
+
+```
+diamond://<beamline>/<year>/<visit>/<rest>
+# e.g. diamond://i13/2025/mg39713-1/experiment/scan_00123.nxs
+#  →  /dls/i13/data/2025/mg39713-1/experiment/scan_00123.nxs
 ```
 
-You can also occasionally sync changes from this template by running the following command in your plugin repository:
+## Tests
 
-```shell
-uvx copier update
+```bash
+pytest
 ```
 
-Releases of the plugin are created via semantic version tags on GitHub, and will require manually updating the `CHANGELOG.md` file.
+Tests use a generated mock NeXus file (~few KB) and don't require any
+production data or a running datalab server.
 
-An example use of this repository can be found at [datalab-app-plugin-example](https://github.com/datalab-org/datalab-app-plugin-example).
+## Roadmap
+
+See `docs/` for the full Phase 1 → 4 plan (URI routing, Zarr/Dask interactive
+viewer, SLURM job dispatch).

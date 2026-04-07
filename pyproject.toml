@@ -3,12 +3,12 @@ requires = ["setuptools >= 75", "wheel", "setuptools_scm ~= 8.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "{{ project_name }}"
-description = "{{ short_description }}"
+name = "datalab-app-xrayct"
+description = "Datalab plugin for X-ray CT and operando battery imaging datasets."
 readme = "README.md"
 keywords = []
 license = { text = "MIT" }
-authors = [{ name = "{{ author_fullname }}", email = "{{ author_email }}" }]
+authors = [{ name = "James Le Houx", email = "james.lehoux@gre.ac.uk" }]
 dynamic = ["version"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -24,24 +24,34 @@ classifiers = [
     "Topic :: Scientific/Engineering",
 ]
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "pydantic>=2.6",
+    "numpy>=1.26,<2",
+    "nexusformat>=1.0",
+    "h5py>=3.10",
+    "tifffile>=2024.1",
+    "Pillow>=10",
+]
+
+[project.optional-dependencies]
+local = ["datalab-server[apps] >= 0.6"]
 
 [project.urls]
-homepage = "https://{{repository_namespace}}.github.io/{{project_name}}/"
-repository = "https://github.com/{{repository_namespace}}/{{project_name}}"
-documentation = "https://{{repository_namespace}}.github.io/{{project_name}}/"
-changelog = "https://github.com/{{repository_namespace}}/{{project_name}}/CHANGELOG.md"
+homepage = "https://jameslehoux.github.io/datalab-app-xrayct/"
+repository = "https://github.com/jameslehoux/datalab-app-xrayct"
+documentation = "https://jameslehoux.github.io/datalab-app-xrayct/"
+changelog = "https://github.com/jameslehoux/datalab-app-xrayct/CHANGELOG.md"
 
 # Edit this entry point with any block classes implemented in this plugin
 [project.entry-points.'pydatalab.apps.plugins']
-example = "{{package_name}}.blocks:ExampleDataBlock"
+xrayct = "datalab_app_xrayct.blocks:XrayCTBlock"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 namespaces = true
 
 [tool.setuptools.package-data]
-{{package_name}} = ["py.typed"]
+datalab_app_xrayct = ["py.typed"]
 
 [tool.mypy]
 ignore_missing_imports = true
