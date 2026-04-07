@@ -1,0 +1,14 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: 5c7c31f
+_src_path: gh:datalab-org/datalab-app-plugin-template
+author_email: james.lehoux@gre.ac.uk
+author_fullname: James Le Houx
+copyright_date: '2026'
+copyright_holder: James Le Houx
+copyright_holder_email: james.lehoux@gre.ac.uk
+package_name: datalab_app_xrayct
+project_name: datalab-app-xrayct
+repository_name: datalab-app-xrayct
+repository_namespace: jameslehoux
+short_description: Datalab plugin for X-ray CT and operando battery imaging datasets.
+

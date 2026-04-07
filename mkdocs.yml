@@ -1,6 +1,6 @@
-site_name: "{{ project_name }}"
-site_description: Documentation for {{project_name}}.
-site_url: "https://{{repository_namespace}}.github.io/{{project_name}}"
+site_name: "datalab-app-xrayct"
+site_description: Documentation for datalab-app-xrayct.
+site_url: "https://jameslehoux.github.io/datalab-app-xrayct"
 
 theme:
   name: material
@@ -35,15 +35,15 @@ theme:
   features:
     - content.tabs.link
 
-repo_name: "{{repository_namespace}}/{{ repository_name}}"
-repo_url: "https://github.com/{{repository_namespace}}/{{repository_name}}"
+repo_name: "jameslehoux/datalab-app-xrayct"
+repo_url: "https://github.com/jameslehoux/datalab-app-xrayct"
 
 docs_dir: "docs"
 
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/{{repository_namespace}}
+      link: https://github.com/jameslehoux
 
 markdown_extensions:
   - admonition
